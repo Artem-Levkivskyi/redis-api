@@ -1,4 +1,4 @@
-# REDIS API - service for work with REDIS storage by Django REST Framework.
+# REDIS API. Service for work with REDIS by Django REST Framework.
 ## Functional:
 ### You can use next DRF requests:
 * POST - for add new value to REDIS storage.
