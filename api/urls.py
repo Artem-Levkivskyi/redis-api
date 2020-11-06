@@ -4,7 +4,7 @@ from .views import manage_items, manage_item
 
 urlpatterns = {
     # if you work with all values
-    path('items', manage_items, name="items"),
+    path('items', manage_items, name="all_items"),
     # if you work with single value
     path('items/<slug:key>', manage_item, name="single_item")
 }

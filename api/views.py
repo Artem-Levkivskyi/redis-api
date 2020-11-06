@@ -13,6 +13,7 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS
 # (.../api/items)
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
+
     # POST request - if you want to create new row in REDIS storage
     if request.method == 'POST':
         item = json.loads(request.body)
@@ -20,7 +21,8 @@ def manage_items(request, *args, **kwargs):
         value = item[key]
         redis_instance.set(key, value)
         response = {'MESSAGE': f"{value} successfully set to {key}"}
-        return Response(response, 200)
+        print(response)
+        return Response(response, 201)
 
     # GET request - if you want to get list with all rows in REDIS storage
     elif request.method == 'GET':
@@ -67,7 +69,7 @@ def manage_item(request, *args, **kwargs):
             result = redis_instance.delete(kwargs['key'])
             if result == 1:
                 response = {'MESSAGE': f"{kwargs['key']} successfully deleted"}
-                return Response(response, status=200)
+                return Response(response, status=204)
             else:
                 response = {
                     'key': kwargs['key'],
