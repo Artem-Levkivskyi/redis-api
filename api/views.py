@@ -1,12 +1,12 @@
-import json
 from django.conf import settings
-import redis
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import redis
+import json
 
 
 # Connect to REDIS server
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+redis_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 
 # Operations which Django doing, if you don`t use key in request
@@ -19,17 +19,16 @@ def manage_items(request, *args, **kwargs):
         item = json.loads(request.body)
         key = list(item.keys())[0]
         value = item[key]
-        redis_instance.set(key, value)
+        redis_storage.set(key, value)
         response = {'MESSAGE': f"{value} successfully set to {key}"}
-        print(response)
         return Response(response, 201)
 
     # GET request - if you want to get list with all rows in REDIS storage
     elif request.method == 'GET':
         items = {}
         count = 0
-        for key in redis_instance.keys("*"):
-            items[key.decode("utf-8")] = redis_instance.get(key)
+        for key in redis_storage.keys("*"):
+            items[key.decode("utf-8")] = redis_storage.get(key)
             count += 1
         response = {
             'count': count,
@@ -47,7 +46,7 @@ def manage_item(request, *args, **kwargs):
     # GET request - if you want to get value from REDIS for your key
     if request.method == 'GET':
         if kwargs['key']:
-            value = redis_instance.get(kwargs['key'])
+            value = redis_storage.get(kwargs['key'])
             if value:
                 response = {
                     'key': kwargs['key'],
@@ -66,7 +65,7 @@ def manage_item(request, *args, **kwargs):
     # DELETE request - if you want to delete row with key from REDIS
     elif request.method == 'DELETE':
         if kwargs['key']:
-            result = redis_instance.delete(kwargs['key'])
+            result = redis_storage.delete(kwargs['key'])
             if result == 1:
                 response = {'MESSAGE': f"{kwargs['key']} successfully deleted"}
                 return Response(response, status=204)
