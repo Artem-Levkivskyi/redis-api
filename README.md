@@ -8,8 +8,8 @@
 ---
 ## How it work:
 ### Work with single item in REDIS storage:
-* For get value from REDIS you should send GET-request to like this - 127.0.0.1:8000/api/items/mykey, where 'mykey' - key for your value.
+* For get value from REDIS you should send GET-request to like this - website.host/api/items/{mykey}, where 'mykey' - key for your value.
 * For delete value from REDIS you should send DELETE request with key of your value.
 ### Work with all items in REDIS storage:
-* For get values from REDIS you should send GET-request like this - 127.0.0.1:8000/api/items.
+* For get values from REDIS you should send GET-request like this - website.host/api/items.
 * If you want create new record in REDIS storage, you should send POST-request with key-value object to 127.0.0.1:8000/api/items.
