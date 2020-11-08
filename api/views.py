@@ -40,7 +40,7 @@ def manage_items(request, *args, **kwargs):
 
 # Operations which Django doing, if you use key in request
 # (.../api/items/{key})
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def manage_item(request, *args, **kwargs):
 
     # GET request - if you want to get value from REDIS for your key
@@ -52,6 +52,28 @@ def manage_item(request, *args, **kwargs):
                     'key': kwargs['key'],
                     'value': value,
                     'msg': 'success'
+                }
+                return Response(response, status=200)
+            else:
+                response = {
+                    'key': kwargs['key'],
+                    'value': None,
+                    'msg': 'Not found'
+                }
+                return Response(response, status=404)
+
+    # PUT request - if you want to update value from REDIS for your key
+    elif request.method == 'PUT':
+        if kwargs['key']:
+            request_data = json.loads(request.body)
+            new_value = request_data['new_value']
+            value = redis_storage.get(kwargs['key'])
+            if value:
+                redis_storage.set(kwargs['key'], new_value)
+                response = {
+                    'key': kwargs['key'],
+                    'value': value,
+                    'msg': f"Successfully updated {kwargs['key']}"
                 }
                 return Response(response, status=200)
             else:

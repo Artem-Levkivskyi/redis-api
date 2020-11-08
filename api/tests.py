@@ -76,8 +76,24 @@ class DeleteSingleItemTestCase(TestCase):
 
     def test_api_delete(self):
         # Create test record
-        response = self.client.post('http://localhost:8000/api/items', {self.key_value: 'unittest'}, format='json')
+        self.client.post('http://localhost:8000/api/items', {self.key_value: 'unittest'}, format='json')
 
         # Test DELETE-request
         response = self.client.delete(reverse(self.url, kwargs={'key': self.key_value}), format='json', follow=True)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class PutSingleItemTestCase(TestCase):
+
+    """ Test for PUT-request, which update record in REDIS storage """
+
+    def setUp(self):
+        self.client = APIClient()
+        self.key = 'put_test'
+        self.url = 'single_item'
+
+    def test_api_put(self):
+
+        self.client.post('http://localhost:8000/api/items', {self.key: 'unittest'}, format='json')
+        response = self.client.put(reverse(self.url, kwargs={'key': self.key}), {'new_value': 'upd_unittest'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
